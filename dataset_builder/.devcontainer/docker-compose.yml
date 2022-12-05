@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  dataset_builder:
+    build:
+      dockerfile: Dockerfile
+      args:
+        kaggle_username: ${KAGGLE_USERNAME}
+        kaggle_key: ${KAGGLE_KEY}
+    volumes:
+      - ..:/home/animmendation/tcc_animmendation/dataset_builder
+      - ../bin:/go/bin
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    working_dir: /home/animmendation/tcc_animmendation/dataset_builder
+    command: tail -f /dev/null
+    env_file: ../.env
+    depends_on:
+      - proxypool
+
+  sftp_server:
+    image: atmoz/sftp:alpine
+    ports:
+      - 2222:22
+    volumes:
+      - '../data:/home/animmendation/data'
+    command: animmendation:12345678:1000
+
+  proxypool:
+    image: evait/multitor:latest
+    ports:
+      - 16379:16379
+    environment:
+      - TOR_INSTANCES=100

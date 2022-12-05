@@ -1,0 +1,28 @@
+{
+  "name": "Animmendation_Dataset_Builder",
+  "dockerComposeFile": "./docker-compose.yml",
+  "service": "dataset_builder",
+  "workspaceFolder": "/home/animmendation/tcc_animmendation/dataset_builder",
+  "postCreateCommand": "chmod +x .devcontainer/entrypoint.sh && .devcontainer/entrypoint.sh",
+  "extensions": [
+    "mads-hartmann.bash-ide-vscode",
+    "EditorConfig.EditorConfig",
+    "christian-kohler.path-intellisense",
+    "redhat.vscode-yaml",
+    "zxh404.vscode-proto3",
+    "golang.go"
+  ],
+  "remoteUser": "animmendation",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:1": {
+      "version": "latest",
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "username": "animmendation",
+      "uid": 1000
+    },
+    "ghcr.io/guiyomh/features/fish:0": {
+      "version": "latest"
+    }
+  }
+}
