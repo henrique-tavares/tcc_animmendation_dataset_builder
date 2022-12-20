@@ -1,38 +1,56 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
+	"strconv"
+	"strings"
 
-	"github.com/sirupsen/logrus"
+	"github.com/samber/lo"
 )
 
 func main() {
+	date := "2019-09-18"
+	dateSplitted, hasErr := lo.TryOr(func() ([]int, error) {
+		return lo.Map(strings.Split(date, "-"), func(datePiece string, _ int) int {
+			num, err := strconv.Atoi(datePiece)
+			fmt.Println(num, err)
+			if err != nil {
+				panic(err)
+			}
 
-	siteUrl := "https://api.myanimelist.net/v2/users/LavaCorDeRosa/animelist?limit=100&offset=300"
+			return num
+		}), nil
+	}, []int{})
 
-	req, _ := http.NewRequest("GET", siteUrl, nil)
+	fmt.Println(date, dateSplitted, hasErr)
 
-	req.Header.Add("X-MAL-CLIENT-ID", "325ae8cd00c25128a5791e1422c9e0eb")
+}
 
-	p, _ := url.Parse("http://45.233.196.210")
+func parseDate(date string) (string, error) {
+	dateSplitted, ok := lo.TryOr(func() ([]int, error) {
+		return lo.Map(strings.Split(date, "-"), func(datePiece string, _ int) int {
+			num, err := strconv.Atoi(datePiece)
+			if err != nil {
+				panic(err)
+			}
 
-	client := http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(p),
-		},
+			return num
+		}), nil
+	}, []int{})
+
+	if !ok {
+		return "", errors.New("invalid date")
 	}
 
-	res, err := client.Do(req)
-	if err != nil {
-		logrus.Fatalln(err)
+	switch len(dateSplitted) {
+	case 3:
+		return fmt.Sprintf("%v-%v-%v", dateSplitted[0], dateSplitted[1], dateSplitted[2]), nil
+	case 2:
+		return fmt.Sprintf("%v-%v-01", dateSplitted[0], dateSplitted[1]), nil
+	case 1:
+		return fmt.Sprintf("%v-01-01", dateSplitted[0]), nil
+	default:
+		return "", errors.New("invalid date")
 	}
-
-	body, _ := ioutil.ReadAll(res.Body)
-
-	fmt.Println(res)
-	fmt.Println(string(body))
-
 }

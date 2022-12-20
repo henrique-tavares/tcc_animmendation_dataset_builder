@@ -145,6 +145,10 @@ func ScrapeAnimes(filePath string, usersListPath string) error {
 
 	go func() {
 		for animeCsv := range animeCsvChan {
+			empty := scrapper.AnimeCsv{}
+			if animeCsv == empty {
+				continue
+			}
 			animeArr := []string{
 				strconv.Itoa(animeCsv.ID),
 				animeCsv.Title,

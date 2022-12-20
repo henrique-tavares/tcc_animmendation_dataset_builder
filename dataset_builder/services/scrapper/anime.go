@@ -117,6 +117,10 @@ func getAnimeWrapper(animeId int, log func(string)) AnimeCsv {
 		log(fmt.Sprintf("Fetching anime %v", animeId))
 		animeJson, err := getAnime(animeId, log)
 		if err != nil {
+			if strings.Contains(err.Error(), "404 Not Found") {
+				log(fmt.Sprintf("err: %v", err))
+				return AnimeCsv{}
+			}
 			delay := 5
 			log(fmt.Sprintf("err: %v. Retrying in %v seconds\n", err, delay))
 			time.Sleep(time.Duration(delay) * time.Second)
@@ -225,7 +229,7 @@ func parseArray(arr []string) string {
 }
 
 func parseDate(date string) (string, error) {
-	dateSplitted, hasErr := lo.TryOr(func() ([]int, error) {
+	dateSplitted, ok := lo.TryOr(func() ([]int, error) {
 		return lo.Map(strings.Split(date, "-"), func(datePiece string, _ int) int {
 			num, err := strconv.Atoi(datePiece)
 			if err != nil {
@@ -236,7 +240,7 @@ func parseDate(date string) (string, error) {
 		}), nil
 	}, []int{})
 
-	if hasErr {
+	if !ok {
 		return "", errors.New("invalid date")
 	}
 
