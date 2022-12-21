@@ -9,6 +9,7 @@ services:
         kaggle_key: ${KAGGLE_KEY}
     volumes:
       - ..:/home/animmendation/tcc_animmendation/dataset_builder
+      - ~/.ssh:/home/animmendation/.ssh
       - ../bin:/go/bin
     extra_hosts:
       - host.docker.internal:host-gateway
