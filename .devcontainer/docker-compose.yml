@@ -2,11 +2,7 @@ version: '3.9'
 
 services:
   dataset_builder:
-    build:
-      dockerfile: Dockerfile
-      args:
-        kaggle_username: ${KAGGLE_USERNAME}
-        kaggle_key: ${KAGGLE_KEY}
+    image: golang:1.19
     volumes:
       - ..:/home/animmendation/tcc_animmendation/dataset_builder
       - ~/.ssh:/home/animmendation/.ssh
@@ -32,4 +28,4 @@ services:
     ports:
       - 16379:16379
     environment:
-      - TOR_INSTANCES=100
+      - TOR_INSTANCES=500
